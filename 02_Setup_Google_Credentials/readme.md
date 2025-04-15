@@ -3,8 +3,19 @@
 
 
 
-
-
-| Column 1 | Column 2 | Column 3 |
-|----------|----------|----------|
-| <img src="./img/02.png" alt="Alt text2" style="width:100%;"> | <img src="./img/03.png" alt="Alt text3" style="width:100%;"> | <img src="./img/04.png" alt="Alt text4" style="width:100%;"> |
+<table>
+  <thead>
+    <tr>
+      <th>Column 1</th>
+      <th>Column 2</th>
+      <th>Column 3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="./img/02.png" alt="Alt text2"></td>
+      <td><img src="./img/03.png" alt="Alt text3"></td>
+      <td><img src="./img/04.png" alt="Alt text4"></td>
+    </tr>
+  </tbody>
+</table>
