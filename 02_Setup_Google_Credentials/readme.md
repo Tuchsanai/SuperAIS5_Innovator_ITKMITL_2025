@@ -6,9 +6,9 @@
 <table>
   <thead>
     <tr>
-      <th>Gmail         </th>
-      <th>Google Sheet         </th>
-      <th>Column 3         </th>
+      <th>   Gmail         </th>
+      <th>   Google Sheet         </th>
+      <th>   Gmail Account         </th>
     </tr>
   </thead>
   <tbody>
