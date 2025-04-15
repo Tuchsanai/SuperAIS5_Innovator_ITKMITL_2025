@@ -3,6 +3,8 @@
   "nodes": [
     {
       "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is มิริน. ฉันสามารถช่วยอะไรคุณได้บ้าง",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
@@ -17,8 +19,6 @@
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.sessionId }}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -102,11 +102,11 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "a21c7b94-017f-47f4-8d44-4d478ff6b7c1",
+  "versionId": "5805508f-4e1a-47b3-858b-d1aabe3e2d68",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "aaa1b8303b4d5cc75fcd5cc1389e863b50e595449bbaf4ca9f198d796b8ae94a"
