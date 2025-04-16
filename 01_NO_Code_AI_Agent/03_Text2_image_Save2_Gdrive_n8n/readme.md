@@ -7,7 +7,7 @@
 
 ## Prompt
 
-...
+```
 
 Create a highly detailed and visually stunning image based on the following text description:  {{ $json.chatInput }} The image should capture the essence, mood, and specific details described in the text. Use vibrant colors, realistic textures, and appropriate lighting to bring the scene to life. Ensure the composition is balanced and visually appealing.
 
@@ -16,10 +16,10 @@ Create a highly detailed and visually stunning image based on the following text
 - no "", '', in prompt.
 - display prompt only not describe.
 
-'''
+```
 
 
-
+```
 ## json form Google AI Studio
 {
   "contents": [
@@ -37,4 +37,4 @@ Create a highly detailed and visually stunning image based on the following text
   }
 }
 
-##
+```
