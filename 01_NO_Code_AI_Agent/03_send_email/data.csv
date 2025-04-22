@@ -1,11 +1,11 @@
-id,order_number,customer_name,customer_email,order_date,product,quantity,total_amount,status
-1,PO1001,John Doe,john.doe@example.com,2025-04-20,Wireless Mouse,2,39.98,Confirmed
-2,PO1002,Jane Smith,jane.smith@example.com,2025-04-20,USB-C Cable,5,49.95,Confirmed
-3,PO1003,Alice Johnson,alice.j@example.com,2025-04-21,Bluetooth Speaker,1,79.99,Confirmed
-4,PO1004,Bob Wilson,bob.w@example.com,2025-04-21,Laptop Stand,3,89.97,Confirmed
-5,PO1005,Emma Brown,emma.b@example.com,2025-04-22,Wireless Keyboard,1,59.99,Confirmed
-6,PO1006,David Lee,david.lee@example.com,2025-04-22,Monitor,2,299.98,Confirmed
-7,PO1007,Sarah Davis,sarah.d@example.com,2025-04-22,Headphones,4,119.96,Confirmed
-8,PO1008,Michael Chen,m.chen@example.com,2025-04-23,Webcam,1,49.99,Confirmed
-9,PO1009,Laura Adams,laura.a@example.com,2025-04-23,Mouse Pad,10,29.90,Confirmed
-10,PO1010,Chris Evans,chris.e@example.com,2025-04-23,HDMI Cable,3,44.97,Confirmed
+order_id,customer_email,customer_name,order_date,total_amount,payment_status
+PO001,john.doe@example.com,John Doe,2025-04-20,150.00,Paid
+PO002,jane.smith@example.com,Jane Smith,2025-04-20,89.99,Pending
+PO003,alice.jones@example.com,Alice Jones,2025-04-21,250.00,Paid
+PO004,bob.brown@example.com,Bob Brown,2025-04-21,45.50,Failed
+PO005,emma.wilson@example.com,Emma Wilson,2025-04-22,320.00,Paid
+PO006,mike.taylor@example.com,Mike Taylor,2025-04-22,99.00,Pending
+PO007,sarah.moore@example.com,Sarah Moore,2025-04-23,175.00,Paid
+PO008,david.lee@example.com,David Lee,2025-04-23,60.00,Paid
+PO009,laura.martin@example.com,Laura Martin,2025-04-23,200.00,Pending
+PO010,chris.white@example.com,Chris White,2025-04-23,130.00,Paid
