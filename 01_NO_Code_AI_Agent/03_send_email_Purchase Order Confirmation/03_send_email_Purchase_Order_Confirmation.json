@@ -1,0 +1,265 @@
+{
+  "name": "03_send_email_Purchase Order Confirmation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -200
+      ],
+      "id": "dbc348c9-2899-4cad-af2c-2704ae19e3bd",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1gVuIaHiok6f63vwbvFz3VIgs156Ghu9IrMQ1D8k887c/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gVuIaHiok6f63vwbvFz3VIgs156Ghu9IrMQ1D8k887c/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -500,
+        -200
+      ],
+      "id": "3fbeff69-f939-4cad-a28f-0ee31aa758ed",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "u2eQkXoirlzEvgLe",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"สถานะการชำระเงิน\"] }}",
+                    "rightValue": "ชำระแล้ว",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "071dd389-5970-4638-98a0-063bcf498a3d"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3c9deda5-3b94-4460-991c-5e69fcf4451a",
+                    "leftValue": "={{ $json[\"สถานะการชำระเงิน\"] }}",
+                    "rightValue": "รอดำเนินการ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b472096c-5101-461b-ae15-c8e1c4b52fa7",
+                    "leftValue": "={{ $json['สถานะการชำระเงิน'] }}",
+                    "rightValue": "ล้มเหลว",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -280,
+        -200
+      ],
+      "id": "77984822-7be1-4002-ae70-da0fd1e41e00",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['อีเมลลูกค้า'] }}",
+        "subject": "=Order Confirmation: {{ $json['รหัสคำสั่งซื้อ'] }}",
+        "emailType": "text",
+        "message": "=Dear {{ $json['ชื่อลูกค้า'] }}, \n\nThank you for your order! Your order {{ $json['รหัสคำสั่งซื้อ'] }} for {{ $json['ยอดรวม (บาท)'] }} บาท has been successfully paid.\n\nBest regards, \nYour Team AI Agent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -40,
+        -460
+      ],
+      "id": "c678f7b5-05f9-456d-af5d-152fc33769b8",
+      "name": "Gmail",
+      "webhookId": "0e73b1e7-d82d-40e8-abd8-d0f646de79d5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q143Phna4M206sZM",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['อีเมลลูกค้า'] }}",
+        "subject": "=Order Pending (รอดำเนินการ) : {{ $json['รหัสคำสั่งซื้อ'] }}",
+        "emailType": "text",
+        "message": "=Dear {{ $json['ชื่อลูกค้า'] }}, \n\nYour order {{ $json['รหัสคำสั่งซื้อ'] }} for {{ $json['ยอดรวม (บาท)'] }} บาท is pending payment. \nPlease complete the payment at your earliest convenience.\n\nBest regards, \nYour Team AI Agent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        -300
+      ],
+      "id": "9c94c7c8-082c-4161-9517-7dd625b34bdc",
+      "name": "Gmail1",
+      "webhookId": "0e73b1e7-d82d-40e8-abd8-d0f646de79d5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q143Phna4M206sZM",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['อีเมลลูกค้า'] }}",
+        "subject": "=Subject: Order Faile: {{ $json['รหัสคำสั่งซื้อ'] }}",
+        "emailType": "text",
+        "message": "=\nDear{{ $json['ชื่อลูกค้า'] }}, \nWe regret to inform you that your order {{ $json['รหัสคำสั่งซื้อ'] }} for {{ $json['ยอดรวม (บาท)'] }} บาท has failed due to a payment issue. Please try again or contact support.\n\nBest regards,\nYour Team\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        160,
+        -120
+      ],
+      "id": "91e43b68-8790-45cd-a24f-3418857a6a8a",
+      "name": "Gmail2",
+      "webhookId": "0e73b1e7-d82d-40e8-abd8-d0f646de79d5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q143Phna4M206sZM",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e919db75-ed80-4557-847f-b1194705cf3d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b6cf006b438418320faeab7702826fbfa00f7ada4578241361be98f0a4e42908"
+  },
+  "id": "IbW3H3jMaIMrnvpG",
+  "tags": []
+}
