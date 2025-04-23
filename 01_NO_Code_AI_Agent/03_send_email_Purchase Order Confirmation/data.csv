@@ -1,11 +1,8 @@
-order_id,customer_email,customer_name,order_date,total_amount,payment_status
-PO001,john.doe@example.com,John Doe,2025-04-20,150.00,Paid
-PO002,jane.smith@example.com,Jane Smith,2025-04-20,89.99,Pending
-PO003,alice.jones@example.com,Alice Jones,2025-04-21,250.00,Paid
-PO004,bob.brown@example.com,Bob Brown,2025-04-21,45.50,Failed
-PO005,emma.wilson@example.com,Emma Wilson,2025-04-22,320.00,Paid
-PO006,mike.taylor@example.com,Mike Taylor,2025-04-22,99.00,Pending
-PO007,sarah.moore@example.com,Sarah Moore,2025-04-23,175.00,Paid
-PO008,david.lee@example.com,David Lee,2025-04-23,60.00,Paid
-PO009,laura.martin@example.com,Laura Martin,2025-04-23,200.00,Pending
-PO010,chris.white@example.com,Chris White,2025-04-23,130.00,Paid
+รหัสคำสั่งซื้อ,อีเมลลูกค้า,ชื่อลูกค้า,วันที่สั่งซื้อ,ยอดรวม (บาท),สถานะการชำระเงิน
+PO002,jane.smith@example.com,เจน สมิธ,2025-04-20,89.99,รอดำเนินการ
+PO003,alice.jones@example.com,อลิซ โจนส์,2025-04-21,250,ชำระแล้ว
+PO004,bob.brown@example.com,บ็อบ บราวน์,2025-04-21,45.5,ล้มเหลว
+PO006,mike.taylor@example.com,ไมค์ เทย์เลอร์,2025-04-22,99,รอดำเนินการ
+PO008,david.lee@example.com,เดวิด ลี,2025-04-23,60,ชำระแล้ว
+PO010,chris.white@example.com,คริส ไวท์,2025-04-23,130,ชำระแล้ว
+PO011,emma.wilson@example.com,เอ็มมา วิลสัน,2025-04-24,75.25,รอดำเนินการ
