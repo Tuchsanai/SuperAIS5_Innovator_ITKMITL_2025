@@ -1,0 +1,96 @@
+{
+  "name": "basic_image_processing_n8n",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -100
+      ],
+      "id": "efeb2328-b6ab-4f60-81f1-536f4ad75c49",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/Tuchsanai/SuperAIS5_Innovator_ITKMITL_2025/74dd348719061294773e3e7ccd3a7c1b67e1bff3/01_NO_Code_AI_Agent/08_yolo_api_basic/cat1.png",
+        "responseFormat": "file",
+        "options": {}
+      },
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -100
+      ],
+      "id": "aae838b8-14ba-4cfa-85a7-406d50e4cc0f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://c537-34-106-158-61.ngrok-free.app/process-image",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "grayscale"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        -100
+      ],
+      "id": "0807f2a4-7bfd-453c-bdf8-3cbdaa716dda",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "42dc7f27-232d-43dd-9427-ba2846a254bc",
+  "meta": {
+    "instanceId": "b6cf006b438418320faeab7702826fbfa00f7ada4578241361be98f0a4e42908"
+  },
+  "id": "dHwARmk2CQNGOTQ3",
+  "tags": []
+}
