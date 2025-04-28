@@ -97,7 +97,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -280,
+        -220,
         80
       ],
       "id": "7c5c37cd-09a5-43cf-a62d-1734cababf87",
@@ -121,7 +121,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -160,
+        -100,
         80
       ],
       "id": "78502cb1-a4dc-4b57-ae61-4307e22ef920",
@@ -133,6 +133,19 @@
           "name": "Gmail account 2"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        240
+      ],
+      "id": "a09bea50-e0f3-4158-bb94-da48ac298793",
+      "name": "Date & Time"
     }
   ],
   "pinData": {},
@@ -202,13 +215,24 @@
           }
         ]
       ]
+    },
+    "Date & Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "797fcda2-6410-42ea-b41a-aeaa38746640",
+  "versionId": "e8204c9f-7f8e-4a6c-a470-3186141e91c2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b6cf006b438418320faeab7702826fbfa00f7ada4578241361be98f0a4e42908"
