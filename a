@@ -1,0 +1,72 @@
+correct this code 
+
+"
+import requests
+
+# Replace with your actual server URL (e.g., http://127.0.0.1:8000 or your ngrok URL)
+url = "https://8f73-34-87-145-147.ngrok-free.app/process-image/" 
+
+# Path to the image you want to upload
+image_path = "cat1.png"
+
+# Define the prompt
+prompt = "grayscale"
+
+# Prepare the files and form data
+with open(image_path, "rb") as img_file:
+    files = {"file": ("image.jpg", img_file, "image/jpeg")}
+    data = {"prompt": prompt}
+    
+    # Send the POST request
+    response = requests.post(url, files=files, data=data)
+
+    # Save the result to a file if successful
+    if response.status_code == 200:
+        with open("processed_image.png", "wb") as f:
+            f.write(response.content)
+        print("Processed image saved as processed_image.png")
+    else:
+        print(f"Error: {response.status_code}")
+        print(response.text)
+"
+
+
+where 
+
+
+"
+# FastAPI endpoint to handle image upload and prompt
+@app.post("/process-image/")
+async def process_image_endpoint(file: UploadFile = File(...), prompt: str = Form(...)):
+    try:
+        # Read the uploaded image
+        image_data = await file.read()
+        image = Image.open(BytesIO(image_data)).convert("RGB")
+        image_np = np.array(image)
+
+        # Process the image with YOLOv11
+        processed_image_np, bounding_boxes, class_names, confidences = process_image(image_np, prompt)
+
+        # Convert processed image to base64 for JSON response
+        processed_image_pil = Image.fromarray(processed_image_np)
+        buffer = BytesIO()
+        processed_image_pil.save(buffer, format="PNG")
+        img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+        print("Image processed successfully.")
+        
+
+        # Prepare response data
+        response_data = {
+            "processed_image": f"data:image/png;base64,{img_base64}",
+            "bounding_boxes": bounding_boxes,  # [[x1, y1, x2, y2], ...]
+            "classes": class_names,           # ["class_name1", "class_name2", ...]
+            "confidences": confidences,       # [conf1, conf2, ...]
+            "message": "Image processed successfully"
+        }
+
+        return JSONResponse(content=response_data, status_code=200)
+
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+"
