@@ -75,7 +75,6 @@ Snippet: xxx
 
 
 
-
 # Agent :
 
 ## System Message
@@ -109,7 +108,7 @@ Email Text: {{ $('Gmail Trigger').first().json.snippet }}
 ```
 
 
-![Alt text1](./img/01.png)
+![Alt text1](./img/001.png)
 
 
 ![Alt text1](./img/02.png)
