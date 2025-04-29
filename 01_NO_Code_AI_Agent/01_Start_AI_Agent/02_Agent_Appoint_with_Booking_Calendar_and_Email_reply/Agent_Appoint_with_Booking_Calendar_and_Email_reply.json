@@ -1,0 +1,306 @@
+{
+  "name": "Agent_Appoint_with_Booking_Calendar_and_Email_reply",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Check if incoming email is about appointment\nWe use LLM to check subject and body of the email and determine if it's an appointment request. ",
+        "height": 490,
+        "width": 617
+      },
+      "id": "eaa31cde-3017-400d-aac8-999def8cc227",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        380,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Get calendar availability and compose a response\nMake sure to update the Workflow ID if you are running this as 2 workflows",
+        "height": 482,
+        "width": 796
+      },
+      "id": "b03d3f72-d1d8-49a7-bcc1-a476fd5c4ad7",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "29ce0093-c4c8-41cc-be69-334de3a1d1a2",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        660,
+        600
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "5176f475-704b-446e-b368-ffa395bb089e",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1200,
+        560
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').first().json.id }}",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "0e8a75dd-ce68-46c3-972c-32b15e04b254",
+      "name": "Send reply",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1660,
+        360
+      ],
+      "webhookId": "0f18d414-1b14-4d2e-9fc2-d2d302372dc6",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q143Phna4M206sZM",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "includeSpamTrash": true,
+          "readStatus": "unread"
+        }
+      },
+      "id": "bf154384-274a-4cdd-977d-890220948a9d",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "position": [
+        440,
+        380
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q143Phna4M206sZM",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sender: {{ $('Gmail Trigger').first().json.From }}\nSubject: {{ $('Gmail Trigger').first().json.Subject }}\nEmail Text: {{ $('Gmail Trigger').first().json.snippet }}",
+        "options": {
+          "systemMessage": "=\nคุณเป็นผู้ช่วยจัดการตารางนัดหมายผ่านอีเมล ตามเนื้อหาอีเมลที่ได้รับ ตรวจสอบความพร้อมในปฏิทินของฉันและร่างคำตอบที่เหมาะสม  \nเน้นกำหนดเวลานัดหมายที่ชัดเจน (ระบุชั่วโมงและนาที) แทนการระบุเพียงวัน  \n\nตรวจสอบให้แน่ใจว่ามีช่วงเวลาว่างเพียงพอก่อนและหลังการประชุมอื่น ๆ เพื่อหลีกเลี่ยงการนัดหมายที่แน่นเกินไป  \n\nหากฉันไม่ว่างในเวลาที่ผู้ส่งร้องขอ ให้เสนอเวลาใหม่ที่เหมาะสมตามความพร้อมของฉัน โดยเว้นระยะห่างอย่างน้อย 15 นาทีจากประชุมครั้งก่อนหรือครั้งถัดไป  \n\nระบุวันที่และเวลาปัจจุบันในคำตอบ โดยอ้างอิงจาก:  {{ $now.toISO() }} \n\nก่อนตอบคำถามให้ทำการขึ้นบรรทัดใหม่ 2 ครั้ง และ คำตอบควรสุภาพ กระชับ และเป็นมืออาชีพ เพื่อให้ผู้รับรู้สึกสะดวกและชัดเจน"
+        }
+      },
+      "id": "7b5a8468-09e5-4575-97cb-9175ee02b19d",
+      "name": "Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1220,
+        360
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "your_email@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $now.minus(1, 'day').toISO() }}",
+        "timeMax": "={{ $now.plus(1, 'month').toISO() }}",
+        "options": {}
+      },
+      "id": "b61e8061-5719-4c30-97da-e306e7b79b76",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        1400,
+        560
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "dXxVP2U6tKOOK5VG",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').first().json.id }}"
+      },
+      "id": "47e07b6c-d432-4111-b33e-56d6c305c40c",
+      "name": "Mark as read",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1660,
+        540
+      ],
+      "webhookId": "7e2d851b-c9f3-471c-875d-0da7c2c3b561",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q143Phna4M206sZM",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Please evaluate the following email to determine if it suggests scheduling a meeting or a call:\nSubject: {{ $json.Subject }}\nSnippet: {{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "appointment",
+              "description": "Classify if this is applyment email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        640,
+        380
+      ],
+      "id": "882971ee-b3b4-41e8-850d-4017b35aa021",
+      "name": "Text Classifier"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Agent": {
+      "main": [
+        [
+          {
+            "node": "Send reply",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mark as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "fbc8f77d-2585-48ab-8c09-a7e0f794a070",
+  "meta": {
+    "templateId": "1953",
+    "instanceId": "b6cf006b438418320faeab7702826fbfa00f7ada4578241361be98f0a4e42908"
+  },
+  "id": "1aek0E9UWK64sK3F",
+  "tags": []
+}
