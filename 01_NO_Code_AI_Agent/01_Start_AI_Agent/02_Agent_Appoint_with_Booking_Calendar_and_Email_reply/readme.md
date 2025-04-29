@@ -13,24 +13,6 @@ In this lab, you will build and run an n8n workflow that automatically processes
 - **LangChain Agent** to orchestrate logic and compose replies
 - **Gmail Node** to send email replies and mark messages as read
 
-By the end of this lab, you will have a reusable template for handling appointment scheduling with minimal manual intervention.
-
-### Prerequisites
-
-- n8n installed and running (Cloud or local)
-- Google account with Gmail and Calendar enabled
-- OpenAI API key with access to gpt-4o-mini
-- Basic familiarity with n8n nodes and JSON workflow import
-
-### Learning Objectives
-
-1. Configure and import a complex n8n workflow
-2. Use Gmail Trigger and Gmail nodes for email integration
-3. Classify email content using LangChain Text Classifier
-4. Invoke OpenAI Chat Models within n8n
-5. Retrieve calendar events with the Google Calendar node
-6. Build an Agent node to coordinate AI tasks and business logic
-7. Test and validate automated email replies based on calendar availability
 
 ### Workflow Walkthrough
 
