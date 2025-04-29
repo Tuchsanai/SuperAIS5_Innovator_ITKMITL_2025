@@ -1,6 +1,66 @@
 
 ![Alt text1](./img/00.png)
 
+## Lab: Automated Appointment Booking and Email Reply with n8n and LLMs
+
+### Overview
+In this lab, you will build and run an n8n workflow that automatically processes incoming appointment requests via email, checks your Google Calendar for availability, and sends a professional, concise response with proposed meeting times. The workflow leverages:
+
+- **Gmail Trigger** to listen for unread messages
+- **LangChain Text Classifier** to detect appointment-related emails
+- **OpenAI Chat Models** (gpt-4o-mini) for intelligent parsing and response drafting
+- **Google Calendar Tool** to fetch availability
+- **LangChain Agent** to orchestrate logic and compose replies
+- **Gmail Node** to send email replies and mark messages as read
+
+By the end of this lab, you will have a reusable template for handling appointment scheduling with minimal manual intervention.
+
+### Prerequisites
+
+- n8n installed and running (Cloud or local)
+- Google account with Gmail and Calendar enabled
+- OpenAI API key with access to gpt-4o-mini
+- Basic familiarity with n8n nodes and JSON workflow import
+
+### Learning Objectives
+
+1. Configure and import a complex n8n workflow
+2. Use Gmail Trigger and Gmail nodes for email integration
+3. Classify email content using LangChain Text Classifier
+4. Invoke OpenAI Chat Models within n8n
+5. Retrieve calendar events with the Google Calendar node
+6. Build an Agent node to coordinate AI tasks and business logic
+7. Test and validate automated email replies based on calendar availability
+
+### Workflow Walkthrough
+
+1. **Gmail Trigger**: Polls your inbox every minute for unread emails (including Spam/Trash).
+2. **Text Classifier**: Applies a LangChain model to categorize incoming messages as `appointment` or other.
+3. **Sticky Note** (Step 1): Describes the logic to analyze the email subject/body for appointment requests.
+4. **OpenAI Chat Model**: Performs initial LLM processing for classification.
+5. **Google Calendar**: Fetches all events from the past day to one month ahead, ensuring context for availability.
+6. **Sticky Note1** (Step 2): Mentions updating workflow IDs when splitting into multiple workflows.
+7. **LangChain Agent**: Receives sender, subject, snippet, and calendar data. It:
+   - Checks requested times against availability
+   - Proposes new time slots if conflicts exist (15-minute buffer)
+   - Formats a polite, professional reply with exact date and time
+   - Inserts current timestamp (ISO format) for clarity
+8. **OpenAI Chat Model1**: Powers the Agent’s reasoning and drafting.
+9. **Send Reply**: Uses the Gmail node to reply to the original message with the Agent’s output.
+10. **Mark as Read**: Archives the email by marking it as read.
+
+### Expected Outcome
+
+After completing this lab, your workflow will automatically:
+- Detect appointment requests in emails
+- Check calendar availability
+- Draft and send professional scheduling replies
+- Archive processed emails
+
+This end-to-end automation reduces manual scheduling overhead and demonstrates how to integrate AI with no-code tools for practical productivity gains.
+
+
+
 
 ## ต่อไปนี้คือตัวอย่างจดหมายนัดพบ 3 ฉบับ โดยสร้างตัวละครสมมติขึ้นมา พร้อมระบุการนัดหมาย:
 ตัวอย่างที่ 1: นัดหมายเพื่อหารือโครงการ
