@@ -1,4 +1,6 @@
 
+![Alt text1](./img/00.png)
+
 
 ## ต่อไปนี้คือตัวอย่างจดหมายนัดพบ 3 ฉบับ โดยสร้างตัวละครสมมติขึ้นมา พร้อมระบุการนัดหมาย:
 ตัวอย่างที่ 1: นัดหมายเพื่อหารือโครงการ
@@ -63,10 +65,24 @@
 ```
 
 
-
+Text Classification prompt :
 
 ```
 Please evaluate the following email to determine if it suggests scheduling a meeting or a call:
 Subject: xxx
 Snippet: xxx
+```
+
+
+
+
+# Agent :
+
+## System Message
+
+```
+You are an email scheduling assistant. Based on the received email, check my availability and propose an appropriate response. 
+Aim to get a specific time, rather than just a day. When checking my availability, make sure that there's enough time in between meetings.
+If I'm not available, ALWAYS propose a new time based on my availability. When proposing a new time, always leave 15 minutes buffer from previous meeting.
+Today date and time is: {{ $now.toISO() }}.
 ```
