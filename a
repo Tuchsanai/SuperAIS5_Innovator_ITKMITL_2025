@@ -1,40 +1,65 @@
-correct this code 
-
-"
-import requests
-
-# Replace with your actual server URL (e.g., http://127.0.0.1:8000 or your ngrok URL)
-url = "https://8f73-34-87-145-147.ngrok-free.app/process-image/" 
-
-# Path to the image you want to upload
-image_path = "cat1.png"
-
-# Define the prompt
-prompt = "grayscale"
-
-# Prepare the files and form data
-with open(image_path, "rb") as img_file:
-    files = {"file": ("image.jpg", img_file, "image/jpeg")}
-    data = {"prompt": prompt}
-    
-    # Send the POST request
-    response = requests.post(url, files=files, data=data)
-
-    # Save the result to a file if successful
-    if response.status_code == 200:
-        with open("processed_image.png", "wb") as f:
-            f.write(response.content)
-        print("Processed image saved as processed_image.png")
-    else:
-        print(f"Error: {response.status_code}")
-        print(response.text)
-"
+how to create curl for app.post("/process-image/")
 
 
-where 
+"# Import necessary libraries
+import nest_asyncio
+import uvicorn
+from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.responses import StreamingResponse, JSONResponse
+from pyngrok import ngrok
+import cv2
+import numpy as np
+from io import BytesIO
+from PIL import Image
+import asyncio
+from ultralytics import YOLO
+import base64
+
+# Apply nest_asyncio to allow running FastAPI in Jupyter
+nest_asyncio.apply()
+
+# Initialize FastAPI app
+app = FastAPI()
+
+# Load YOLOv11 model (choose appropriate model variant: yolov11n, yolov11s, etc.)
 
 
-"
+# Load a model
+model = YOLO("yolo11n.pt")
+
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return JSONResponse(content={"status": "healthy"}, status_code=200)
+
+# Define the image processing function with YOLOv11
+def process_image(image: np.ndarray, prompt: str) -> tuple:
+    # Perform YOLOv11 inference
+    results = model(image)
+
+    # Extract detection results
+    detections = results[0].boxes  # Get bounding boxes
+    bounding_boxes = detections.xyxy.cpu().numpy().tolist()  # [x1, y1, x2, y2]
+    confidences = detections.conf.cpu().numpy().tolist()  # Confidence scores
+    class_ids = detections.cls.cpu().numpy().astype(int).tolist()  # Class IDs
+
+    # Get class names
+    class_names = [model.names[cls_id] for cls_id in class_ids]
+
+    # Draw bounding boxes on the image
+    processed_image = image.copy()
+    for box, conf, cls_name in zip(bounding_boxes, confidences, class_names):
+        x1, y1, x2, y2 = map(int, box)
+        # Draw rectangle
+        cv2.rectangle(processed_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        # Add label
+        label = f"{cls_name} {conf:.2f}"
+        cv2.putText(processed_image, label, (x1, y1 - 10),
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+    return processed_image, bounding_boxes, class_names, confidences
+
 # FastAPI endpoint to handle image upload and prompt
 @app.post("/process-image/")
 async def process_image_endpoint(file: UploadFile = File(...), prompt: str = Form(...)):
