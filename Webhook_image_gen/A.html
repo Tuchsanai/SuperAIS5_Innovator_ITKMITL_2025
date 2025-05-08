@@ -1,54 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Text to Image Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 60%;
+      max-width: 500px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #image-container {
+      margin-top: 30px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Text to Image Generator</h2>
-  <input type="text" id="promptInput" placeholder="Enter your prompt" size="50">
-  <button onclick="generateImage()">Generate Image</button>
+  <h1>Generate Image from Text</h1>
+  <input type="text" id="textInput" placeholder="Describe the image..." />
+  <button onclick="generateImage()">Generate</button>
 
-  <div id="result" style="margin-top: 20px;">
-    <p><strong>Generated Image:</strong></p>
-    <img id="outputImage" src="" alt="Image will appear here" style="max-width: 100%; border: 1px solid #ccc; display: none;">
-  </div>
+  <div id="image-container"></div>
 
   <script>
     async function generateImage() {
-      const prompt = document.getElementById('promptInput').value;
-      const resultImage = document.getElementById('outputImage');
-      const resultDiv = document.getElementById('result');
+      const inputText = document.getElementById("textInput").value;
+      const imageContainer = document.getElementById("image-container");
 
-      if (!prompt) {
-        alert("Please enter a prompt.");
-        return;
-      }
+      imageContainer.innerHTML = "Loading image...";
 
       try {
-        const response = await fetch('https://tuchsanai.app.n8n.cloud/webhook-test/0b5cb8e5-ce7d-4b6c-ac65-28dbf598df57', {
-          method: 'POST',
+        const response = await fetch("https://tuchsanai.app.n8n.cloud/webhook-test/0b5cb8e5-ce7d-4b6c-ac65-28dbf598df57", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify({ text: prompt })
+          body: JSON.stringify({ text: inputText })
         });
 
-        const data = await response.json();
+        if (!response.ok) throw new Error("Image generation failed");
 
-        // Assume webhook returns base64 or direct image URL
-        if (data.image_base64) {
-          resultImage.src = `data:image/png;base64,${data.image_base64}`;
-        } else if (data.image_url) {
-          resultImage.src = data.image_url;
-        } else {
-          throw new Error("No image data found in response.");
-        }
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
 
-        resultImage.style.display = "block";
-      } catch (err) {
-        console.error(err);
-        alert("Error generating image.");
+        imageContainer.innerHTML = `<img src="${imageUrl}" alt="Generated Image"/>`;
+      } catch (error) {
+        imageContainer.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
       }
     }
   </script>
