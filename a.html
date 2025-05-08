@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background-color: #0084ff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .chat-body {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 10px;
+            word-wrap: break-word;
+        }
+        .sent {
+            background-color: #0084ff;
+            color: white;
+            align-self: flex-end;
+        }
+        .received {
+            background-color: #e9ecef;
+            color: black;
+            align-self: flex-start;
+        }
+        .message img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+        .chat-footer {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #message-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        #send-btn {
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #send-btn:hover {
+            background-color: #006bbf;
+        }
+        #image-input {
+            display: none;
+        }
+        #image-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #image-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Chat</h2>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- Messages will be appended here -->
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button id="send-btn">Send</button>
+            <input type="file" id="image-input" accept="image/*">
+            <button id="image-btn">Image</button>
+        </div>
+    </div>
+
+    <script>
+        const webhookUrl = 'https://tpn8n.ap.loclx.io/webhook-test/bb072193-a312-4264-93b9-06fce0bda68d';
+        const chatBody = document.getElementById('chat-body');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const imageInput = document.getElementById('image-input');
+        const imageBtn = document.getElementById('image-btn');
+
+        // Function to append a message to the chat
+        function appendMessage(content, type, isImage = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', type);
+            if (isImage) {
+                const img = document.createElement('img');
+                img.src = content;
+                messageDiv.appendChild(img);
+            } else {
+                messageDiv.textContent = content;
+            }
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Function to send data to webhook
+        async function sendToWebhook(formData) {
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.message) {
+                    appendMessage(data.message, 'received');
+                }
+            } catch (error) {
+                console.error('Error sending to webhook:', error);
+                appendMessage('Error sending message', 'received');
+            }
+        }
+
+        // Send text message
+        sendBtn.addEventListener('click', async () => {
+            const text = messageInput.value.trim();
+            if (text) {
+                appendMessage(text, 'sent');
+                const formData = new FormData();
+                formData.append('text', text);
+                await sendToWebhook(formData);
+                messageInput.value = '';
+            }
+        });
+
+        // Trigger image input click
+        imageBtn.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        // Send image
+        imageInput.addEventListener('change', async () => {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    appendMessage(e.target.result, 'sent', true);
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    await sendToWebhook(formData);
+                };
+                reader.readAsDataURL(file);
+                imageInput.value = ''; // Reset input
+            }
+        });
+
+        // Send message on Enter key
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
