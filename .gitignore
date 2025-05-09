@@ -4,6 +4,8 @@ kaggle.json
 solution/
 **/backup/
 
+# Yolo
+*.pt
 
 # --- Python ---
 # Byte-compiled / optimized / DLL files
