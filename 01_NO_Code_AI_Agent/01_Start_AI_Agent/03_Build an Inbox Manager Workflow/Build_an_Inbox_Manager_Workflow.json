@@ -1,0 +1,452 @@
+{
+  "name": "Build an Inbox Manager Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -840,
+        180
+      ],
+      "id": "e71d23c0-1956-48ff-a794-00c463b403c0",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2Xg648TYa87Pxxqf",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Subject:  {{ $json.Subject }}\nEmail Body: {{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "=Promotion",
+              "description": "These emails include special offers, discounts, product launches, limited-time deals, exclusive bonuses, or announcements related to paid features, services, or events. "
+            },
+            {
+              "category": "Personal ",
+              "description": "These are personal messages that usually come from friends and family. These emails usually include personal updates, inquiries, etc. "
+            },
+            {
+              "category": "Sales ",
+              "description": "These emails are focused on presenting a product, service, or offer with the intent to convert interest into action. They highlight key benefits, features, pricing, and calls-to-action—often tied to limited-time offers, launches, or high-value solutions."
+            },
+            {
+              "category": "Misc",
+              "description": "These are emails that have no specified purpose, and are unrelated to the other categories. "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        180
+      ],
+      "id": "1f33c963-4d1d-4495-bd5f-0b12225a46c8",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -700,
+        400
+      ],
+      "id": "2a05c34b-5b53-445a-9a09-10366cedca76",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3654252536992158890"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -120,
+        500
+      ],
+      "id": "2f870ccd-6b3f-4d4a-9ae4-2775f50096d2",
+      "name": "Misc",
+      "webhookId": "c7f22c09-794f-4848-8b94-9b37ce624531"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3957098548187896119"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -120,
+        300
+      ],
+      "id": "4714df76-37e9-42f7-98f8-a283646aa039",
+      "name": "Sales",
+      "webhookId": "c7f22c09-794f-4848-8b94-9b37ce624531"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_8568792631284931210"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -140,
+        60
+      ],
+      "id": "c0b4787e-b072-473a-a1fb-1e0ed7c81caa",
+      "name": "Personal",
+      "webhookId": "c7f22c09-794f-4848-8b94-9b37ce624531",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2Xg648TYa87Pxxqf",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3578078871006746269"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -140,
+        -120
+      ],
+      "id": "ad97cd0d-6b9d-465d-bc3d-abf551bf42a8",
+      "name": "Promotion",
+      "webhookId": "c7f22c09-794f-4848-8b94-9b37ce624531",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2Xg648TYa87Pxxqf",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        -120
+      ],
+      "id": "a6c67f0c-10cc-4594-a1bb-983f6edcb238",
+      "name": "Mark as Read",
+      "webhookId": "5e490dd6-c9df-46ba-964e-11ee777c4b2f"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an intelligent bot that specializes in replying to emails.",
+              "role": "system"
+            },
+            {
+              "content": "=This is the email to analyze: \nSubject:  {{ $('Gmail Trigger').item.json.Subject }}\nEmail Body: {{ $('Gmail Trigger').item.json.snippet }}"
+            },
+            {
+              "content": "=Please output the data as JSON.\n{\n\"subject\":\"\",\n\"email_body:\"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        120,
+        60
+      ],
+      "id": "50f0f79f-f341-4137-94ef-d217aab5e30d",
+      "name": "OpenAI"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an intelligent bot that specializes in replying to sales inquiry emails.",
+              "role": "system"
+            },
+            {
+              "content": "=This is the email to analyze: \nSubject:  {{ $('Gmail Trigger').item.json.Subject }}\nEmail Body: {{ $('Gmail Trigger').item.json.snippet }}"
+            },
+            {
+              "content": "=Please output the data as JSON.\n{\n\"subject\":\"\",\n\"email_body:\"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        120,
+        300
+      ],
+      "id": "acb99509-75da-4996-af3c-e8091521c546",
+      "name": "OpenAI1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail Trigger').item.json.From }}",
+        "subject": "={{ $('Gmail Trigger').item.json.Subject }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content.email_body }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": ""
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "id": "4d362d98-c207-42fa-a1c0-e384254b7054",
+      "name": "Send Email",
+      "webhookId": "77397716-5880-4503-9f39-c96f4c271bd0"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.subject }}",
+        "message": "={{ $json.message.content.email_body }}",
+        "options": {
+          "threadId": "={{ $('Gmail Trigger').item.json.threadId }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        60
+      ],
+      "id": "6447dead-b776-42ec-804d-b59fdfdd68c0",
+      "name": "Create Draft",
+      "webhookId": "51b32882-04be-475c-bc25-1f28ce9aeaef",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2Xg648TYa87Pxxqf",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        500
+      ],
+      "id": "df066a18-1bcf-49e9-8bf9-daa83c6aec6b",
+      "name": "Gmail",
+      "webhookId": "701221f0-d139-4580-a3d4-f76ea3b868eb"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Promotion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Personal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sales",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Misc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Promotion": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Personal": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Create Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Misc": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fff6c8c8-ea3d-4547-92eb-c47cabf031b4",
+  "meta": {
+    "instanceId": "b6cf006b438418320faeab7702826fbfa00f7ada4578241361be98f0a4e42908"
+  },
+  "id": "GYoAGUc3QZL3FjYG",
+  "tags": []
+}
