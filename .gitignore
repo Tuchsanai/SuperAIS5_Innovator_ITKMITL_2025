@@ -4,6 +4,8 @@ kaggle.json
 solution/
 **/backup/
 
+.env
+
 # Yolo
 *.pt
 
