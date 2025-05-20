@@ -1,12 +1,10 @@
-https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1
-
-
-
 ![Alt text1](./img/00.png)
 ![Alt text1](./img/01.png)
-![Alt text1](./img/02.png)
 
 
+
+
+### Prompt List
 
 ```
 
@@ -64,30 +62,105 @@ https://platform.openai.com/docs/guides/image-generation?image-generation-model=
 
 ```
 
-
-ตัวอย่าง
-
-เด็กผู้หญิงนั่งอ่านหนังสือใต้ต้นไม้ใหญ่ในฤดูใบไม้ร่วง
-
-
-![Alt text2](./img/01.png)
-
-
+## Prompt to create HTML code
+```
+create html code for image generation from text project with javascript and css styles.  The input from text is send to web hook server with POST request
+to url=xxx and then receive respond with binary image file from web hook server and show image in page
 ```
 
-ในฤดูใบไม้ร่วงที่เต็มไปด้วยเสน่ห์ เด็กผู้หญิงคนหนึ่งนั่งอยู่ใต้ต้นไม้ใหญ่ที่มีใบไม้หลากสีสัน เปลี่ยนจากสีเขียวสดชื่นเป็นสีส้ม แดง และเหลืองที่สวยงาม ใบไม้ที่ร่วงหล่นรอบตัวเธอสร้างความรู้สึกอบอุ่นและสงบ ราวกับว่าโลกใบนี้ได้ถูกสร้างขึ้นจากธรรมชาติที่งดงาม
 
+# HTML Code for Image Generation from Text
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Text to Image Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+      text-align: center;
+    }
 
-แสงแดดอ่อนๆ ส่องลอดผ่านกิ่งก้านของต้นไม้ ทำให้พื้นดินมีเงาและแสงที่นุ่มนวล เธอสวมเสื้อกันหนาวที่อุ่นสบาย ทำให้เธอรู้สึกปลอดภัยในความเย็นของฤดู ใส่ชุดกระโปรงยาวที่คลุมเข่าซึ่งมีลวดลายที่สดใส และถุงเท้าสูงที่เพิ่มความน่ารักให้กับเธอ
+    h1 {
+      margin-bottom: 20px;
+    }
 
+    input[type="text"] {
+      padding: 10px;
+      width: 60%;
+      max-width: 500px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
 
-เมื่อเธอนั่งอยู่บนผ้าห่มลายเต่าทองที่กระจายอยู่บนพื้นหญ้า เธอเปิดหนังสือที่เต็มไปด้วยเรื่องราวและจินตนาการ ขณะที่อ่านอยู่ เธอเหมือนหลุดเข้าไปในโลกที่หนังสือเล่าให้ฟัง อาจจะเป็นโลกแห่งเวทมนตร์ หรือการผจญภัยที่น่าตื่นเต้น ทุกตัวอักษรในหนังสือทำให้เธอรู้สึกถึงอารมณ์ ความฝัน และการค้นพบ
+    button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
+    button:hover {
+      background: #0056b3;
+    }
 
-ภาพนี้ถูกเติมเต็มด้วยความเงียบสงบ ซึ่งทำให้ผู้ที่มองเห็นรู้สึกถึงความแจ่มใสในใจ การอ่านหนังสือในธรรมชาติไม่เพียงแต่ช่วยให้เธอผ่อนคลาย แต่ยังเปิดโอกาสให้เธอได้ใช้จินตนาการและสำรวจโลกใหม่ๆ ในขณะที่รอบตัวเธอถูกล้อมรอบด้วยความงดงามของฤดูใบไม้ร่วง
+    #image-container {
+      margin-top: 30px;
+    }
 
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generate Image from Text</h1>
+  <input type="text" id="textInput" placeholder="Describe the image..." />
+  <button onclick="generateImage()">Generate</button>
 
-เด็กผู้หญิงคนนี้จึงเป็นตัวแทนของความสุขในช่วงเวลาที่เธอสามารถหลบหนีจากความวุ่นวายของโลกภายนอก และค้นพบความรักในการอ่านและธรรมชาติที่มอบให้กับเธอ โดยไม่มีอะไรจะรบกวนจิตใจ ความสงบเหล่านี้เป็นสิ่งที่ควรค่าแก่การรักษาในชีวิตของเราทุกคน.
+  <div id="image-container"></div>
+
+  <script>
+    async function generateImage() {
+      const inputText = document.getElementById("textInput").value;
+      const imageContainer = document.getElementById("image-container");
+
+      imageContainer.innerHTML = "Loading image...";
+
+      try {
+        const response = await fetch("xxx", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text: inputText })
+        });
+
+        if (!response.ok) throw new Error("Image generation failed");
+
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+
+        imageContainer.innerHTML = `<img src="${imageUrl}" alt="Generated Image"/>`;
+      } catch (error) {
+        imageContainer.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
 
 
 ```
