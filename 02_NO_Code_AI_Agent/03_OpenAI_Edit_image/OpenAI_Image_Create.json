@@ -1,0 +1,284 @@
+{
+  "name": "OpenAI_Image_Create",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1280,
+        -400
+      ],
+      "id": "3d42fefb-85a7-4a64-a68c-20c9b623e170",
+      "name": "When chat message received",
+      "webhookId": "e73523cf-9a8a-4af6-8905-603e71817716"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a5d52c2-5af1-4796-acba-4e1807fc7d7b",
+              "name": "image_prompt",
+              "type": "string",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "id": "c41a8091-d952-4f5a-ae24-3b0691bbce57",
+              "name": "number_of_images",
+              "type": "number",
+              "value": 1
+            },
+            {
+              "id": "00feec5a-19c8-43af-bf93-e0729d1391f8",
+              "name": "quality_of_image",
+              "type": "string",
+              "value": "high"
+            },
+            {
+              "id": "1b359a11-c05a-49c8-aa27-402b145fcbc1",
+              "name": "size_of_image",
+              "type": "string",
+              "value": "1024x1024"
+            },
+            {
+              "id": "6cf4ba85-d11a-48bb-9eaf-4084c9538d87",
+              "name": "openai_image_model",
+              "type": "string",
+              "value": "=gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4d108213-0108-4042-abc4-c40108847ad2",
+      "name": "Set Variables1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -660,
+        -400
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{ $json.openai_image_model }}\",\n  \"prompt\": \"{{ $json.image_prompt }}\",\n  \"n\": {{ $json.number_of_images }},\n  \"size\": \"{{ $json.size_of_image }}\",\n  \"quality\": \"{{ $json.quality_of_image }}\"\n}",
+        "options": {}
+      },
+      "id": "83f7d8e5-ceea-45f5-b128-7befca251863",
+      "name": "OpenAI - Generate Image1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -460,
+        -400
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        -400
+      ],
+      "id": "e8d1546b-2dc1-47bc-817e-48b500b48624",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Create a highly detailed and visually stunning image based on the following text description:  {{ $json.chatInput }} The image should capture the essence, mood, and specific details described in the text. Use vibrant colors, realistic textures, and appropriate lighting to bring the scene to life. Ensure the composition is balanced and visually appealing.\\n\\n[CONSIDER]\\n- prompt in English only.\\n- no \\\"\\\", '', in prompt.\\n- display prompt only not describe."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -1060,
+        -400
+      ],
+      "id": "888c3592-3e7c-40e5-bf1b-b1ec4ea34e8b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1060,
+        -180
+      ],
+      "id": "c46b1e0a-8209-4e16-9d8b-51400e0527d0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant, ช่ายเขียนบทความจากหัวข้อต่อไปนี้ เป็นภาษาไทย"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -680,
+        -740
+      ],
+      "id": "8ff10637-dcb9-4edb-b05e-c4f96bfa227f",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -680,
+        -560
+      ],
+      "id": "ed23466d-454a-499a-8a60-f7c62a47d067",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Generate Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Generate Image1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Variables1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8af10799-2bf3-488d-8fc9-5ef97d6f2c38",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b6cf006b438418320faeab7702826fbfa00f7ada4578241361be98f0a4e42908"
+  },
+  "id": "pfj6MB08jZxcL8WQ",
+  "tags": []
+}
