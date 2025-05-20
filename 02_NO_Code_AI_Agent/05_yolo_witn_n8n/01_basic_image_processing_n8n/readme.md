@@ -1,6 +1,12 @@
 https://ngrok.com/
 
+![Alt text1](./image/ngrok_meaning.png)
 
+
+![Alt text1](./image/ngrok_page.png)
+
+
+![Alt text1](./image/ngrok.png)
 
 ![Alt text1](./image/01.png)
 
