@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Generator from Text</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+    }
+
+    textarea {
+      width: 80%;
+      height: 100px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      resize: vertical;
+    }
+
+    button {
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #00bfa5;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #008e76;
+    }
+
+    img {
+      margin-top: 2rem;
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 191, 165, 0.5);
+    }
+
+    .loader {
+      margin-top: 2rem;
+      display: none;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Generate Image from Text</h1>
+  <textarea id="prompt" placeholder="Enter your image description..."></textarea>
+  <button onclick="generateImage()">Generate</button>
+  <div class="loader" id="loader">Generating image, please wait...</div>
+  <img id="outputImage" style="display:none;" />
+
+  <script>
+    async function generateImage() {
+      const prompt = document.getElementById('prompt').value;
+      const loader = document.getElementById('loader');
+      const img = document.getElementById('outputImage');
+
+      if (!prompt.trim()) {
+        alert("Please enter a prompt.");
+        return;
+      }
+
+      loader.style.display = 'block';
+      img.style.display = 'none';
+
+      try {
+        const response = await fetch("https://tuchsanai.app.n8n.cloud/webhook-test/0b5cb8e5-ce7d-4b6c-ac65-28dbf598df57", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt })
+        });
+
+        if (!response.ok) throw new Error("Server error");
+
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        img.src = imageUrl;
+        img.style.display = 'block';
+      } catch (err) {
+        alert("Failed to generate image: " + err.message);
+      } finally {
+        loader.style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,256 @@
+{
+  "name": "OpenAI_Image_Create_Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=",
+        "options": {
+          "systemMessage": "=Create a highly detailed and visually stunning image based on the following text description:  {{ $json.body.text }} The image should capture the essence, mood, and specific details described in the text. Use vibrant colors, realistic textures, and appropriate lighting to bring the scene to life. Ensure the composition is balanced and visually appealing.\\n\\n[CONSIDER]\\n- prompt in English only.\\n- no \\\"\\\", '', in prompt.\\n- display prompt only not describe.  "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -1060,
+        -400
+      ],
+      "id": "37838bf1-6ed3-48f0-9852-f9048dc3bb45",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1060,
+        -180
+      ],
+      "id": "789e871b-6ed8-4867-8802-57db568f3afc",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0b5cb8e5-ce7d-4b6c-ac65-28dbf598df57",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        -400
+      ],
+      "id": "8e0a2010-773f-4af2-9496-6f57b71b7772",
+      "name": "Webhook",
+      "webhookId": "0b5cb8e5-ce7d-4b6c-ac65-28dbf598df57"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a5d52c2-5af1-4796-acba-4e1807fc7d7b",
+              "name": "image_prompt",
+              "type": "string",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "id": "c41a8091-d952-4f5a-ae24-3b0691bbce57",
+              "name": "number_of_images",
+              "type": "number",
+              "value": 1
+            },
+            {
+              "id": "00feec5a-19c8-43af-bf93-e0729d1391f8",
+              "name": "quality_of_image",
+              "type": "string",
+              "value": "high"
+            },
+            {
+              "id": "1b359a11-c05a-49c8-aa27-402b145fcbc1",
+              "name": "size_of_image",
+              "type": "string",
+              "value": "1024x1024"
+            },
+            {
+              "id": "6cf4ba85-d11a-48bb-9eaf-4084c9538d87",
+              "name": "openai_image_model",
+              "type": "string",
+              "value": "=gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9556ae01-67ac-4188-b23f-b7435dbd31b5",
+      "name": "Set Variables1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -640,
+        -400
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{ $json.openai_image_model }}\",\n  \"prompt\": \"{{ $json.image_prompt }}\",\n  \"n\": {{ $json.number_of_images }},\n  \"size\": \"{{ $json.size_of_image }}\",\n  \"quality\": \"{{ $json.quality_of_image }}\"\n}",
+        "options": {}
+      },
+      "id": "2ecbe148-a3a4-4647-8ca3-2606dea8b14c",
+      "name": "OpenAI - Generate Image1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -440,
+        -400
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "bwb3Pp6zLE1dkUmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        -400
+      ],
+      "id": "84d0ec07-c7d3-4ac5-b99d-25fef9c45248",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        -400
+      ],
+      "id": "8780255b-9779-45bd-b4b3-cfacf40819e1",
+      "name": "Convert to File"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Variables1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Generate Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Generate Image1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bf812b02-eac5-4def-bdb7-f54aeb421895",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b6cf006b438418320faeab7702826fbfa00f7ada4578241361be98f0a4e42908"
+  },
+  "id": "uroj77auLYn8g4Yr",
+  "tags": []
+}
